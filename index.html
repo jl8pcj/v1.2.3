@@ -157,16 +157,26 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   max-width:700px;
   margin:10px 0 0 0px;
 }
+
+.topRow{
+  display:flex;
+  align-items:center;
+  gap:20px;
+}
 </style>
 </head>
 <body>
-<h2>Doncon 感度調整</h2>
-<div id="status">
-  <span id="led" class="dot red"></span>
-  <span id="statText">DISCONNECTED</span>
+<div class="topRow">
+  <h2>Doncon 感度調整</h2>
+
+  <div id="status">
+    <span id="led" class="dot red"></span>
+    <span id="statText">DISCONNECTED</span>
+  </div>
+
+  <button id="connectBtn">接続</button>
+  <button id="saveBtn">SAVE</button>
 </div>
-<button id="connectBtn">接続</button>
-<button id="saveBtn">SAVE</button>
 
 <!-- ミュート設定 -->
 <div style="margin-top:20px; max-width:800px;">
