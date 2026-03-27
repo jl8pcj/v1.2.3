@@ -24,28 +24,40 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 /* メーター全体 */
 .meterContainer{
   position:relative;
-  width:500px;
-  height:500px;
+  width:600px;
+  height:350px;
   margin-top:20px;
 }
 
-/* D/K リング */
-.ring{
+/* 左リング（D） */
+.ring.left{
   position:absolute;
-  width:450px;
-  height:450px;
+  width:220px;
+  height:220px;
   top:50%;
-  left:50%;
+  left:20%;
   transform:translate(-50%,-50%);
   border-radius:50%;
   overflow:hidden;
 }
 
-/* 中央の黒丸 */
+/* 右リング（K） */
+.ring.right{
+  position:absolute;
+  width:220px;
+  height:220px;
+  top:50%;
+  left:80%;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  overflow:hidden;
+}
+
+/* 中の黒丸 */
 .ringInner{
   position:absolute;
-  width:320px;
-  height:320px;
+  width:150px;
+  height:150px;
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
@@ -54,7 +66,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   z-index:2;
 }
 
-/* バー（簡易版：高さ固定） */
+/* バー（簡易） */
 .meterBar{
   position:absolute;
   width:100%;
@@ -69,7 +81,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   top:50%;
   left:50%;
   width:300px;
-  height:300px;
+  height:200px;
   transform:translate(-50%,-50%);
   display:flex;
   justify-content:center;
@@ -78,7 +90,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 
 .meterWrap{
   width:140px;
-  height:300px;
+  height:200px;
   background:#222;
   transition:background 0.03s linear;
 }
@@ -175,9 +187,9 @@ function createUI(){
   channels.innerHTML="";
   meterContainer.innerHTML="";
 
-  /* ---- Dリング ---- */
+  /* ---- 左リング（D） ---- */
   const dRing=document.createElement("div");
-  dRing.className="ring";
+  dRing.className="ring left";
   const dInner=document.createElement("div");
   dInner.className="ringInner";
   const dBar=document.createElement("div");
@@ -187,9 +199,9 @@ function createUI(){
   dRing.appendChild(dInner);
   meterContainer.appendChild(dRing);
 
-  /* ---- Kリング ---- */
+  /* ---- 右リング（K） ---- */
   const kRing=document.createElement("div");
-  kRing.className="ring";
+  kRing.className="ring right";
   const kInner=document.createElement("div");
   kInner.className="ringInner";
   const kBar=document.createElement("div");
@@ -199,7 +211,7 @@ function createUI(){
   kRing.appendChild(kInner);
   meterContainer.appendChild(kRing);
 
-  /* ---- F/J 中央 ---- */
+  /* ---- 中央 F/J ---- */
   const circle=document.createElement("div");
   circle.className="circleContainer";
 
