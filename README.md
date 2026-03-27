@@ -1,7 +1,7 @@
 GP10ピンを"ショート"で開発モード　"OPEN"で実行モード<br>
 開発モードでは下記のSAVEができません。<br>
 <br>
-感度調節サイトhttps://jl8pcj.github.io/v1.2/index.html<br>
+感度調節サイトhttps://jl8pcj.github.io/v1.2.3/index.html<br>
 <br>
 <br>
 "接続"でポートを選択　記録されているパラメータで自動的にスライダーが調整されます。<br>
