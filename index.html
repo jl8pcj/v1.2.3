@@ -135,7 +135,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 /* メッセージボックス */
 #messageBox{
   position:absolute;
-  left:220px;
+  left:250px;
   top:70%;
   transform:translate(260px,-50%);
   width:450px;
@@ -160,7 +160,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 </style>
 </head>
 <body>
-<h2>Doncon2 感度調整</h2>
+<h2>Doncon 感度調整</h2>
 <div id="status">
   <span id="led" class="dot red"></span>
   <span id="statText">DISCONNECTED</span>
@@ -173,13 +173,13 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   <h3>ミュート設定</h3>
 
   <div class="sliderRow">
-    <label>F/J → D/K mute (ms)</label>
+    <label>ドンを叩いたとき カッを受け付けない時間(ms)</label>
     <input id="mute_fj" type="range" min="0" max="50" step="1"
            oninput="sendParam(-1,this.value,'mute_fj')">
   </div>
 
   <div class="sliderRow">
-    <label>D/K → F/J mute (ms)</label>
+    <label>カッを叩いたとき ドンを受け付けない時間(ms)</label>
     <input id="mute_dk" type="range" min="0" max="50" step="1"
            oninput="sendParam(-1,this.value,'mute_dk')">
   </div>
@@ -282,7 +282,7 @@ function createUI(){
   // メッセージボックス
   const msgBox = document.createElement("textarea");
   msgBox.id = "messageBox";
-  msgBox.placeholder = "接続を押してポートを選択してください…";
+  msgBox.placeholder = "接続を押してポートを選択してください\n\n\n gain \n値を大きくすると、小さい打撃でもバーが大きく上がる（敏感になる）\n値を小さくすると、大きく叩かないとバーが上がらない（鈍感になる）\n\n threshold\n値が低いと、ちょっとした振動や誤反応でもバーが上がる\n値が高いと、しっかり叩いたときしかバーが上がらない\n\n\n\nGP15のジャンパーピン”接続”でcode.py改変\n通常は”open”にしておいてください";
   meterContainer.appendChild(msgBox);
 
   // gain / threshold
