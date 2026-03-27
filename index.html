@@ -320,21 +320,26 @@ saveBtn.onclick=()=>{
 };
 
 /* ================= 簡易メーター ================= */
-function updateMeter(ch,value){
-  const bar=document.getElementById("bar"+ch);
+function updateMeter(ch, value){
+  const bar = document.getElementById("bar" + ch);
 
-  // 入力判定（低め）
-  const hit = value > 200;
+  // threshold は UI のスライダーで設定されている
+  const threshold = parseFloat(
+    document.querySelectorAll(".sliderRow input")[2 + ch*2 + 1].value
+  );
 
-  if(hit){
-    if(ch===0 || ch===3)
-      bar.style.background="#00ff66";  // D/K → 緑
-    else
-      bar.style.background="#ff4444";  // F/J → 赤
+  // threshold を超えたら発光
+  if(value > threshold){
+    if(ch === 0 || ch === 3){
+      bar.style.background = "#00ff66";  // D/K → 緑
+    }else{
+      bar.style.background = "#ff4444";  // F/J → 赤
+    }
   }else{
-    bar.style.background="#222";       // 入力なし
+    bar.style.background = "#222";       // 入力なし
   }
 }
+
 
 /* ================= READ ================= */
 async function startRead(){
