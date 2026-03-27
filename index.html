@@ -59,9 +59,8 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   position:absolute;
   width:100%;
   height:100%;
-  opacity:0.4;
   background:#222;
-  transition:background 0.05s linear;
+  transition:background 0.03s linear;
 }
 
 /* F/J 中央 */
@@ -81,8 +80,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   width:140px;
   height:300px;
   background:#222;
-  opacity:0.4;
-  transition:background 0.05s linear;
+  transition:background 0.03s linear;
 }
 
 .meterWrap.f{
@@ -255,7 +253,8 @@ saveBtn.onclick=()=>{
 function updateMeter(ch,value){
   const bar=document.getElementById("bar"+ch);
 
-  if(value > 1000){  // 閾値は適宜調整
+  // ★ 超低閾値で確実に反応
+  if(value > 50){
     if(ch===0 || ch===3)
       bar.style.background="#00ff66";  // D/K → 緑
     else
