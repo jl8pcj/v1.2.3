@@ -160,8 +160,15 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 
 .topRow{
   display:flex;
+  justify-content:space-between; /* 左右に分ける */
   align-items:center;
-  gap:20px;
+  width:100%;
+}
+
+.rightGroup{
+  display:flex;
+  align-items:center;
+  gap:15px; /* ステータスとボタンの間隔 */
 }
 </style>
 </head>
@@ -169,13 +176,15 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 <div class="topRow">
   <h2>Doncon 感度調整</h2>
 
-  <div id="status">
-    <span id="led" class="dot red"></span>
-    <span id="statText">DISCONNECTED</span>
-  </div>
+  <div class="rightGroup">
+    <div id="status">
+      <span id="led" class="dot red"></span>
+      <span id="statText">DISCONNECTED</span>
+    </div>
 
-  <button id="connectBtn">接続</button>
-  <button id="saveBtn">SAVE</button>
+    <button id="connectBtn">接続</button>
+    <button id="saveBtn">SAVE</button>
+  </div>
 </div>
 
 <!-- ミュート設定 -->
