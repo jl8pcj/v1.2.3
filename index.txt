@@ -27,7 +27,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   margin:10px 0 0 0px;
 }
 
-/* D/K リング（図形は絶対に変更しない） */
+/* D/K リング */
 .ring{
   position:absolute;
   width:450px;
@@ -39,7 +39,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   overflow:hidden;
 }
 
-/* 黒丸 */
+/* ドーナツの中部分（黒） */
 .ring.d .ringInner,
 .ring.k .ringInner{
   position:absolute;
@@ -65,34 +65,39 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   overflow:hidden;
 }
 
-/* 左半円 */
+/* D 左半分 */
 .ring.d .ringContent{
   clip-path: polygon(0 0, calc(50% - 5px) 0, calc(50% - 5px) 100%, 0 100%);
   background:#222;
 }
 
-/* 右半円 */
+/* K 右半分 */
 .ring.k .ringContent{
   clip-path: polygon(calc(50% + 5px) 0, 100% 0, 100% 100%, calc(50% + 5px) 100%);
   background:#222;
 }
 
-/* バー（高さは使わないが図形は残す） */
+/* バー */
 .ringContent .meterBar{
   position:absolute;
   bottom:0;
   width:100%;
-  height:100%;
-  background:#222;
-  transition:background 0.03s linear;
+  height:0%;
+  transition:height 0.02s linear, background 0.05s linear;
+  background:linear-gradient(to top,#00ff88,#00cc66);
 }
 
-/* peakBar → 非表示にする（図形は残す） */
+/* peak */
 .ringContent .peakBar{
-  display:none;
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:3px;
+  background:#fff;
+  z-index:3;
 }
 
-/* F/J 中央（図形そのまま） */
+/* F/J 中央 */
 .circleContainer{
   position:absolute;
   top:50%;
@@ -108,7 +113,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   position:relative;
   height:300px;
   overflow:hidden;
-  background:#222;
+  background:#333;
 }
 .meterWrap.f{
   width:145px;
@@ -124,12 +129,15 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   position:absolute;
   bottom:0;
   width:100%;
-  height:100%;
-  background:#222;
-  transition:background 0.03s linear;
+  height:0%;
+  background:linear-gradient(to top,#ff4040,#ff0000);
 }
 .meterWrap.f .peakBar,.meterWrap.j .peakBar{
-  display:none;
+  position:absolute;
+  bottom:0;
+  width:100%;
+  height:3px;
+  background:#fff;
 }
 
 /* メッセージボックス */
@@ -157,6 +165,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
   max-width:700px;
   margin:10px 0 0 0px;
 }
+
 </style>
 </head>
 <body>
@@ -168,7 +177,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 <button id="connectBtn">接続</button>
 <button id="saveBtn">SAVE</button>
 
-<!-- ミュート設定 -->
+<!-- ★ ミュート設定スライダー -->
 <div style="margin-top:20px; max-width:400px;">
   <h3>ミュート設定</h3>
 
@@ -192,6 +201,8 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 let port, reader, writer;
 let lastReceive=0;
 const names=["左カッ","左ドン","右ドン","右カッ"];
+let peaks=[0,0,0,0];
+let flashTimers=[0,0,0,0];
 const led=document.getElementById("led");
 const statText=document.getElementById("statText");
 const channels=document.getElementById("channels");
@@ -238,6 +249,10 @@ function createUI(){
   dBar.className="meterBar";
   dBar.id="bar0";
   dContent.appendChild(dBar);
+  const dPeak=document.createElement("div");
+  dPeak.className="peakBar";
+  dPeak.id="peak0";
+  dContent.appendChild(dPeak);
   dRing.appendChild(dInner);
   dRing.appendChild(dContent);
   meterContainer.appendChild(dRing);
@@ -253,6 +268,10 @@ function createUI(){
   kBar.className="meterBar";
   kBar.id="bar3";
   kContent.appendChild(kBar);
+  const kPeak=document.createElement("div");
+  kPeak.className="peakBar";
+  kPeak.id="peak3";
+  kContent.appendChild(kPeak);
   kRing.appendChild(kInner);
   kRing.appendChild(kContent);
   meterContainer.appendChild(kRing);
@@ -266,14 +285,22 @@ function createUI(){
   const fBar=document.createElement("div");
   fBar.className="meterBar";
   fBar.id="bar1";
+  const fPeak=document.createElement("div");
+  fPeak.className="peakBar";
+  fPeak.id="peak1";
   fWrap.appendChild(fBar);
+  fWrap.appendChild(fPeak);
 
   const jWrap=document.createElement("div");
   jWrap.className="meterWrap j";
   const jBar=document.createElement("div");
   jBar.className="meterBar";
   jBar.id="bar2";
+  const jPeak=document.createElement("div");
+  jPeak.className="peakBar";
+  jPeak.id="peak2";
   jWrap.appendChild(jBar);
+  jWrap.appendChild(jPeak);
 
   circleContainer.appendChild(fWrap);
   circleContainer.appendChild(jWrap);
@@ -282,10 +309,10 @@ function createUI(){
   // メッセージボックス
   const msgBox = document.createElement("textarea");
   msgBox.id = "messageBox";
-  msgBox.placeholder = "接続を押してポートを選択してください…";
+  msgBox.placeholder = "接続を押してポートを選択してください\n\n\n gain \n値を大きくすると、小さい打撃でもバーが大きく上がる（敏感になる）\n値を小さくすると、大きく叩かないとバーが上がらない（鈍感になる）\n\n threshold\n値が低いと、ちょっとした振動や誤反応でもバーが上がる\n値が高いと、しっかり叩いたときしかバーが上がらない\n\n\n\nGP15のジャンパーピン”接続”でcode.py改変\n通常は”open”にしておいてください";
   meterContainer.appendChild(msgBox);
 
-  // gain / threshold
+  // gain / threshold スライダー
   for(let i=0;i<4;i++){
     const div=document.createElement("div");
     div.className="channelCard";
@@ -319,22 +346,33 @@ saveBtn.onclick=()=>{
   send({cmd:"save"});
 };
 
-/* ================= 簡易メーター ================= */
+/* ================= METER ================= */
 function updateMeter(ch,value){
+  const percent=Math.min(100,(value/65535)*100);
   const bar=document.getElementById("bar"+ch);
+  bar.style.height=percent+"%";
 
-  // 入力判定（低め）
-  const hit = value > 200;
-
-  if(hit){
-    if(ch===0 || ch===3)
-      bar.style.background="#00ff66";  // D/K → 緑
-    else
-      bar.style.background="#ff4444";  // F/J → 赤
-  }else{
-    bar.style.background="#222";       // 入力なし
+  if(percent>70){
+    bar.style.background="white";
+    flashTimers[ch]=5;
   }
+  if(flashTimers[ch]>0){
+    flashTimers[ch]--;
+    if(flashTimers[ch]==0){
+      if(ch==0||ch==3)
+        bar.style.background="linear-gradient(to top,#00ff88,#00cc66)";
+      else
+        bar.style.background="linear-gradient(to top,#ff4040,#ff0000)";
+    }
+  }
+
+  if(value>peaks[ch]) peaks[ch]=value;
+  const peak=document.getElementById("peak"+ch);
+  const peakPercent=(peaks[ch]/65535)*100;
+  peak.style.bottom=peakPercent+"%";
 }
+
+setInterval(()=>{for(let i=0;i<4;i++) peaks[i]*=0.99;},40);
 
 /* ================= READ ================= */
 async function startRead(){
@@ -356,18 +394,27 @@ async function startRead(){
         const data=JSON.parse(line);
 
         if(data.type==="adc"){
+          setStatus("RECEIVING DATA","green");
           updateMeter(data.ch,data.value);
         }
+
+        if(data.type==="saved")
+          setStatus("SAVED ✓","green");
+
+        if(data.type==="save_error")
+          setStatus("SAVE ERROR","red");
 
         if(data.type==="settings"){
           const sliders=document.querySelectorAll(".sliderRow input");
 
-          document.getElementById("mute_fj").value=data.mute_fj;
-          document.getElementById("mute_dk").value=data.mute_dk;
+          // ★ ミュート設定反映
+          document.getElementById("mute_fj").value = data.mute_fj;
+          document.getElementById("mute_dk").value = data.mute_dk;
 
+          // ★ gain / threshold の正しい位置（ミュート2つの後ろ）
           for(let i=0;i<4;i++){
-            sliders[2 + i*2].value=data.gain[i];
-            sliders[2 + i*2 + 1].value=data.threshold[i];
+            sliders[2 + i*2].value = data.gain[i];
+            sliders[2 + i*2 + 1].value = data.threshold[i];
           }
 
           setStatus("SETTINGS LOADED","green");
