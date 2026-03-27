@@ -177,7 +177,7 @@ button{font-size:16px;padding:10px 16px;margin-right:10px;cursor:pointer;}
 <button id="connectBtn">接続</button>
 <button id="saveBtn">SAVE</button>
 
-<!-- ★ 追加：ミュート設定スライダー -->
+<!-- ★ ミュート設定スライダー -->
 <div style="margin-top:20px; max-width:400px;">
   <h3>ミュート設定</h3>
 
@@ -406,14 +406,16 @@ async function startRead(){
 
         if(data.type==="settings"){
           const sliders=document.querySelectorAll(".sliderRow input");
-          for(let i=0;i<4;i++){
-            sliders[i*2].value=data.gain[i];
-            sliders[i*2+1].value=data.threshold[i];
-          }
 
-          // ★ 追加：ミュート設定反映
+          // ★ ミュート設定反映
           document.getElementById("mute_fj").value = data.mute_fj;
           document.getElementById("mute_dk").value = data.mute_dk;
+
+          // ★ gain / threshold の正しい位置（ミュート2つの後ろ）
+          for(let i=0;i<4;i++){
+            sliders[2 + i*2].value = data.gain[i];
+            sliders[2 + i*2 + 1].value = data.threshold[i];
+          }
 
           setStatus("SETTINGS LOADED","green");
         }
