@@ -347,32 +347,20 @@ saveBtn.onclick=()=>{
 };
 
 /* ================= METER ================= */
-function updateMeter(ch,value){
-  const percent=Math.min(100,(value/65535)*100);
-  const bar=document.getElementById("bar"+ch);
-  bar.style.height=percent+"%";
+function updateMeter(ch, value){
+  const bar = document.getElementById("bar" + ch);
 
-  if(percent>70){
-    bar.style.background="white";
-    flashTimers[ch]=5;
-  }
-  if(flashTimers[ch]>0){
-    flashTimers[ch]--;
-    if(flashTimers[ch]==0){
-      if(ch==0||ch==3)
-        bar.style.background="linear-gradient(to top,#00ff88,#00cc66)";
-      else
-        bar.style.background="linear-gradient(to top,#ff4040,#ff0000)";
+  // 閾値を超えたら色を点灯
+  if(value > 1000){   // 閾値は適宜調整
+    if(ch === 0 || ch === 3){
+      bar.style.background = "#00ff66";   // D/K → 緑
+    }else{
+      bar.style.background = "#ff4444";   // F/J → 赤
     }
+  }else{
+    bar.style.background = "#222";        // 入力なし → 暗く
   }
-
-  if(value>peaks[ch]) peaks[ch]=value;
-  const peak=document.getElementById("peak"+ch);
-  const peakPercent=(peaks[ch]/65535)*100;
-  peak.style.bottom=peakPercent+"%";
 }
-
-setInterval(()=>{for(let i=0;i<4;i++) peaks[i]*=0.99;},40);
 
 /* ================= READ ================= */
 async function startRead(){
